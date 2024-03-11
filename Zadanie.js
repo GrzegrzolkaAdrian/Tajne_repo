@@ -8,8 +8,13 @@ function calculateMedian(expenses) {
         const sortedDays = Object.keys(expenses[month]).sort((a, b) => a - b);
 
         for (const day of sortedDays) {
-            // Check if the day is in the first week (before or on the first Sunday)
-            if (new Date(`${month}-${day}`).getDay() <= 0) {
+            // Get the date for the current month and day
+            const currentDate = new Date(`${month}-${day}`);
+            const currentDay = currentDate.getDate();
+            const currentWeekday = currentDate.getDay();
+
+            // Check if the day is on or before the first Sunday of the month
+            if (currentWeekday === 0 && currentDay <= 7) {
                 if (expenses[month][day]["food"]) {
                     foodAndFuel = foodAndFuel.concat(expenses[month][day]["food"]);
                 }
@@ -17,6 +22,15 @@ function calculateMedian(expenses) {
                     foodAndFuel = foodAndFuel.concat(expenses[month][day]["fuel"]);
                 } else {
                     foodAndFuel = foodAndFuel.concat([0]); // If "fuel" list is [] create array with 0 and concat to foodAndFuel
+                }
+            } else if (currentDay < 7) { // Include all days before the first Sunday as well
+                if (expenses[month][day]["food"]) {
+                    foodAndFuel = foodAndFuel.concat(expenses[month][day]["food"]);
+                }
+                if (expenses[month][day]["fuel"].length > 0) {
+                    foodAndFuel = foodAndFuel.concat(expenses[month][day]["fuel"]);
+                } else {
+                    foodAndFuel = foodAndFuel.concat([0]);
                 }
             }
         }
